@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import Post
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 # Create your views here.
 
 
@@ -16,10 +18,18 @@ class PostDetailView(generic.DetailView):
     context_object_name = "post"
 
 
-class PostCreateView(generic.CreateView):
+class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     template_name = "Create.html"
-    context_object_name = "post"
+    fields = ["title", "body"]
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy("posts:detail", kwargs={"pk":self.object.pk})
+
 
 
 
