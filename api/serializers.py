@@ -8,3 +8,4 @@ class PostSerializer(ModelSerializer):
         fields = [
             "id", "author", "title", "body", "created", "updated"
         ]
+        depth = 1
